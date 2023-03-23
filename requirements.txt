@@ -10,3 +10,5 @@ simplemma
 nltk
 stopwordsiso
 gensim
+dvc
+# pip3 install torch torchvision torchaudio
