@@ -100,6 +100,7 @@ def main(lang="", query="eu"):
     if lang != "":
         processing_by_lang(lang, query)
     else:
+
         preprocessing_all_langs(query)
 
 

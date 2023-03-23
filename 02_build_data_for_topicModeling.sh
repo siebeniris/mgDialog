@@ -1,14 +1,15 @@
 #!/bin/bash
 #
 #SBATCH --partition=prioritized
-#SBATCH --job-name=preprocess
+#SBATCH --job-name=build_data
 #SBATCH --output=%j.out
 #SBATCH --time=30:00:00
 #SBATCH --mem=256GB
 
 
-query=$1
-lang=$2
+lang=$1
+query=$2
+
 
 source $HOME/.bashrc
 conda activate mg
