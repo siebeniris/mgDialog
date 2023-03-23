@@ -15,6 +15,6 @@ conda activate mg
 
 cd $HOME/mgDialog
 
-python src/preprocessor/preprocessing "$lang" "$query"
+python src/preprocessor/preprocessing.py "$lang" "$query"
 
 
