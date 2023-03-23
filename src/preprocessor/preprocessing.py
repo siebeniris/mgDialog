@@ -16,7 +16,7 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-from preprocessor.defines import *
+from src.preprocessor.defines import *
 
 pandarallel.initialize()
 
@@ -96,7 +96,7 @@ def preprocessing_all_langs(query="eu"):
 
 
 def main(lang="", query="eu"):
-    if lang is not "":
+    if lang != "":
         processing_by_lang(lang, query)
     else:
         preprocessing_all_langs(query)

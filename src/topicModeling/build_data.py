@@ -16,7 +16,6 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-
 # Maximum / minimum document frequency
 max_df = 0.7
 min_df = 10  # choose desired value for min_df
@@ -275,7 +274,8 @@ def processing_by_lang(lang, query="eu"):
                 os.mkdir(output_dir_month)
 
             texts = read_data(filepath, os.path.join(output_dir_month, file))
-            build_data(texts, outputdir=output_dir_month+'/')
+            build_data(texts, outputdir=output_dir_month + '/')
+
 
 def processing_all_langs(query="eu"):
     with open("data/config.yaml") as f:
@@ -295,4 +295,5 @@ def main(lang="", query="eu"):
 
 if __name__ == '__main__':
     import plac
+
     plac.call(main)
