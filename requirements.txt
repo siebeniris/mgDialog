@@ -1,0 +1,12 @@
+scikit-learn
+numpy
+pandas
+pandarallel
+tqdm
+joblib
+pyyaml
+# conda install pytorch torchvision torchaudio -c pytorch
+simplemma
+nltk
+stopwordsiso
+gensim
