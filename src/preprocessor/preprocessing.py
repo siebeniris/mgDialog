@@ -78,7 +78,7 @@ def processing_by_lang(lang, query="eu"):
 
             if not os.path.exists(outputfile):
                 print(f"processing file {filepath}")
-                df = pd.read_csv(filepath, index_col=0, low_memory=False)
+                df = pd.read_csv(filepath, index_col=0, lineterminator="\n")
 
                 df = df[fields].dropna(subset=["fullText"])
 
