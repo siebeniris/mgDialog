@@ -83,6 +83,7 @@ def processing_by_lang(lang, query="eu"):
             df = df.dropna(subset=["preprocessed_text"]).sort_values(by="date")
 
             outputfile = os.path.join(outputdir, file)
+            print(f"output to {outputfile}")
             df.to_csv(outputfile, index=False)
 
 
