@@ -23,6 +23,11 @@ pandarallel.initialize()
 SPECIAL_CHARS = ['&nbsp;', '&lt;', '&gt;', '&amp;', '&quot;', '&apos;', '&cent;', '&pound;', '&yen;', '&euro;',
                  '&copy;', '&reg;']
 
+pageTypes_eu = ["Blogs", "Forums", "Instagram", "News", "Reddit", "Review", "Tumblr", "Twitter", "YouTube"]
+# review only for english
+
+pageTypes_un = ["Blogs", "Facebook", "Forums", "Instagram", "News", "Reddit", "Tumblr", "Twitter", "YouTube"]
+
 
 def cleaning_text_for_tp(text, stopwords, lang):
     # field: fullText
@@ -61,38 +66,50 @@ def cleaning_text_for_tp(text, stopwords, lang):
         return np.NaN
 
 
+def create_dir(dirpath):
+    if not os.path.exists(dirpath):
+        os.mkdir(dirpath)
+
+
 def processing_by_lang(lang, query="eu"):
-    fields = ["date", "resourceId", "countryCode", "fullText", "pageTypeName"]
-    folderdir = os.path.join("data", "raw", query, lang)
-    outputdir = os.path.join("data/preprocessed", query, lang)
-    stopwords = stopwordsiso.stopwords(lang)
+    if query == "eu":
+        pageTypes = pageTypes_eu
+    else:
+        pageTypes = pageTypes_un
 
-    if not os.path.exists(outputdir):
-        os.mkdir(outputdir)
+    for pageType in pageTypes:
+        folderdir = os.path.join(f"data/pageTypes/{query}/{lang}/{pageType}")
+        outputdir_query = os.path.join("data/preprocessed", query)
+        create_dir(outputdir_query)
 
+        outputdir_lang = os.path.join("data/preprocessed", query, lang)
+        create_dir(outputdir_lang)
 
-    for file in tqdm(os.listdir(folderdir)):
-        if file.endswith(".csv"):
-            filepath = os.path.join(folderdir, file)
-            outputfile = os.path.join(outputdir, file)
+        outputdir_pageType = os.path.join("data/preprocessed", query, lang, pageType)
+        create_dir(outputdir_pageType)
 
-            if not os.path.exists(outputfile):
-                print(f"processing file {filepath}")
-                df = pd.read_csv(filepath, index_col=0, low_memory=False, lineterminator="\n")
+        stopwords = stopwordsiso.stopwords(lang)
 
-                df = df[fields].dropna(subset=["fullText"])
+        for file in tqdm(os.listdir(folderdir)):
+            if file.endswith(".csv"):
+                filepath = os.path.join(folderdir, file)
+                outputfile = os.path.join(outputdir_pageType, file)
 
-                df["month"] = df["date"].str[:7]
-                df["preprocessed_text"] = df["fullText"].parallel_apply(cleaning_text_for_tp, args=(stopwords, lang))
-                df = df.dropna(subset=["preprocessed_text"]).sort_values(by="date")
+                if not os.path.exists(outputfile):
+                    print(f"processing file {filepath}")
+                    df = pd.read_csv(filepath, index_col=0, low_memory=False, lineterminator="\n")
 
+                    df["preprocessed_text"] = df["fullText"].parallel_apply(cleaning_text_for_tp,
+                                                                            args=(stopwords, lang))
+                    df = df.dropna(subset=["preprocessed_text"]).sort_values(by="date")
+                    df = df[["resourceId", "countryCode", "pageTypeName", "month", "preprocessed_text"]]
 
-                print(f"output to {outputfile}")
-                df.to_csv(outputfile, index=False)
-            else:
-                print(
-                    f"outputfile {outputfile} exists!"
-                )
+                    print(f"output to {outputfile}")
+                    df.to_csv(outputfile, index=False)
+                else:
+                    print(
+                        f"outputfile {outputfile} exists!"
+                    )
 
 
 def preprocessing_all_langs(query="eu"):
