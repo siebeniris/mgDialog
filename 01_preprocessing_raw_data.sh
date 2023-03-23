@@ -7,8 +7,9 @@
 #SBATCH --mem=256GB
 
 
-query=$1
-lang=$2
+lang=$1
+query=$2
+
 
 source $HOME/.bashrc
 conda activate mg
