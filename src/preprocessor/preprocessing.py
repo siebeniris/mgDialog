@@ -70,21 +70,29 @@ def processing_by_lang(lang, query="eu"):
     if not os.path.exists(outputdir):
         os.mkdir(outputdir)
 
+
     for file in tqdm(os.listdir(folderdir)):
         if file.endswith(".csv"):
             filepath = os.path.join(folderdir, file)
-            print(f"processing file {filepath}")
-            df = pd.read_csv(filepath, index_col=0, low_memory=False)
-
-            df = df[fields].dropna(subset=["fullText"])
-
-            df["month"] = df["date"].str[:7]
-            df["preprocessed_text"] = df["fullText"].parallel_apply(cleaning_text_for_tp, args=(stopwords, lang))
-            df = df.dropna(subset=["preprocessed_text"]).sort_values(by="date")
-
             outputfile = os.path.join(outputdir, file)
-            print(f"output to {outputfile}")
-            df.to_csv(outputfile, index=False)
+
+            if not os.path.exists(outputfile):
+                print(f"processing file {filepath}")
+                df = pd.read_csv(filepath, index_col=0, low_memory=False)
+
+                df = df[fields].dropna(subset=["fullText"])
+
+                df["month"] = df["date"].str[:7]
+                df["preprocessed_text"] = df["fullText"].parallel_apply(cleaning_text_for_tp, args=(stopwords, lang))
+                df = df.dropna(subset=["preprocessed_text"]).sort_values(by="date")
+
+
+                print(f"output to {outputfile}")
+                df.to_csv(outputfile, index=False)
+            else:
+                print(
+                    f"outputfile {outputfile} exists!"
+                )
 
 
 def preprocessing_all_langs(query="eu"):

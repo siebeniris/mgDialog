@@ -4,16 +4,19 @@ import pandas as pd
 import argparse
 import multiprocessing
 
+from yaml import load
+
+try:
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    from yaml import Loader, Dumper
+
 cpu_units = multiprocessing.cpu_count()
 parser = argparse.ArgumentParser(description='The Embedded Topic Model')
 
 ### data and file related arguments
-# de/el/en/es/fi/fr/hu/it/nl/pl/sv
 parser.add_argument('--lang', type=str, default="en")
 parser.add_argument('--query', type=str, default="eu")
-parser.add_argument('--data_folder', type=str, default='output/preprocessed/tp/',
-                    help='a .txt file containing the corpus')
-
 
 parser.add_argument('--dim_rho', type=int, default=300, help='dimensionality of the word embeddings')
 parser.add_argument('--min_count', type=int, default=2, help='minimum term frequency (to define the vocabulary)')
@@ -40,9 +43,8 @@ class MySentences(object):
 def processing_one_file(file, outputfile):
     sentences = MySentences(filename=file)
 
-    print(list(sentences)[:10])
     print('start training skipgram word embeddings....')
-    print(f"open {data_file} ....")
+    print(f"open {file} ....")
     model = gensim.models.Word2Vec(sentences, min_count=args.min_count, sg=args.sg, vector_size=args.dim_rho,
                                    epochs=args.iters, workers=args.workers, negative=args.negative_samples,
                                    window=args.window_size)
@@ -53,29 +55,36 @@ def processing_one_file(file, outputfile):
 
 
 def processing_files_by_lang(lang, query):
-    data_folder = os.path.join("data/tp/")
+    data_folder = os.path.join(f"data/tp/")
+    lang_folder = os.path.join(data_folder, query, lang)
+    print(lang_folder)
+    for foldername in os.listdir(lang_folder):
+        month_folder = os.path.join(lang_folder, foldername)
+        csv_file = os.path.join(month_folder, f"{foldername}.csv")
+        outputfile = os.path.join(month_folder, "embeddings.wordvectors")
+        if not os.path.exists(outputfile):
+            processing_one_file(csv_file, outputfile)
+        else:
+            print(f"outputfile {outputfile} exists!")
 
 
+def preprocessing_all_langs(query="eu"):
+    with open("data/config.yaml") as f:
+        langs = load(f, Loader=Loader)["langs"]
+
+    for lang in langs:
+        print("processing lang ", lang)
+        processing_files_by_lang(lang, query)
 
 
+def main(lang="", query="eu"):
+    if lang != "":
+        processing_files_by_lang(lang, query)
+    else:
+
+        preprocessing_all_langs(query)
 
 
+if __name__ == '__main__':
+    main(args.lang, args.query)
 
-
-data_file = os.path.join(args.data_folder, args.lang, f'{args.lang}_built.csv')
-emb_file = os.path.join(args.data_folder, args.lang, 'embeddings.wordvectors')
-
-
-sentences = MySentences(filename=data_file)
-
-print(list(sentences)[:10])
-print('start training skipgram word embeddings....')
-print(f"open {data_file} ....")
-model = gensim.models.Word2Vec(sentences, min_count=args.min_count, sg=args.sg, vector_size=args.dim_rho,
-                               epochs=args.iters, workers=args.workers, negative=args.negative_samples,
-                               window=args.window_size)
-
-# Write the embeddings to a file
-print(f'writing to {emb_file}')
-word_vectors = model.wv
-word_vectors.save(emb_file)
