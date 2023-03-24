@@ -17,16 +17,12 @@ except ImportError:
     from yaml import Loader, Dumper
 
 from src.preprocessor.defines import *
+from src.utils.load_lists import pageTypes_eu, pageTypes_un
 
 pandarallel.initialize()
 
 SPECIAL_CHARS = ['&nbsp;', '&lt;', '&gt;', '&amp;', '&quot;', '&apos;', '&cent;', '&pound;', '&yen;', '&euro;',
                  '&copy;', '&reg;']
-
-pageTypes_eu = ["Blogs", "Forums", "Instagram", "News", "Reddit", "Review", "Tumblr", "Twitter", "YouTube"]
-# review only for english
-
-pageTypes_un = ["Blogs", "Facebook", "Forums", "Instagram", "News", "Reddit", "Tumblr", "Twitter", "YouTube"]
 
 
 def cleaning_text_for_tp(text, stopwords, lang):
@@ -78,6 +74,7 @@ def processing_by_lang(lang, query="eu"):
         pageTypes = pageTypes_un
 
     for pageType in pageTypes:
+        # from pageType data.
         folderdir = os.path.join(f"data/pageTypes/{query}/{lang}/{pageType}")
         outputdir_query = os.path.join("data/preprocessed", query)
         create_dir(outputdir_query)
@@ -97,12 +94,14 @@ def processing_by_lang(lang, query="eu"):
 
                 if not os.path.exists(outputfile):
                     print(f"processing file {filepath}")
-                    df = pd.read_csv(filepath, index_col=0, low_memory=False, lineterminator="\n")
+                    df = pd.read_csv(filepath, low_memory=False, lineterminator="\n")
 
                     df["preprocessed_text"] = df["fullText"].parallel_apply(cleaning_text_for_tp,
                                                                             args=(stopwords, lang))
-                    df = df.dropna(subset=["preprocessed_text"]).sort_values(by="date")
-                    df = df[["resourceId", "countryCode", "pageTypeName", "month", "preprocessed_text"]]
+
+                    df = df.dropna(subset=["preprocessed_text"])
+                    df["LEN"] = df["preprocessed_text"].astype(str).str.split(" ").str.len()
+                    df = df[["resourceId", "date", "preprocessed_text", "countryCode", "pageTypeName", "month", "fullText", "LEN"]]
 
                     print(f"output to {outputfile}")
                     df.to_csv(outputfile, index=False)

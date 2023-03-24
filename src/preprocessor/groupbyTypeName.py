@@ -2,15 +2,12 @@ import pandas as pd
 import os
 from tqdm import tqdm
 
-
 from yaml import load
 
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
     from yaml import Loader, Dumper
-
-
 
 pageTypes_eu = ["Blogs", "Forums", "Instagram", "News", "Reddit", "Review", "Tumblr", "Twitter", "YouTube"]
 # review only for english
@@ -52,7 +49,7 @@ def processing_one_file(file, lang="en", query="eu"):
         create_dir(outputdir_type)
         try:
 
-            df_type = df[df["pageTypeName"]==type]
+            df_type = df[df["pageTypeName"] == type]
             if len(df_type) > 0:
                 df_type.to_csv(os.path.join(outputdir_type, filename), index=False)
                 print(f"{lang} -> {type} ->{filename} -> {len(df_type)}")

@@ -1,4 +1,8 @@
 import numpy as np
+import os
+import torch
+
+from src.utils.read_files import load_keywords_by_lang
 
 
 def get_topic_diversity(beta, topk):
@@ -93,3 +97,45 @@ def nearest_neighbors(word, embeddings, vocab):
     nearest_neighbors = mostSimilar[:20]
     nearest_neighbors = [vocab[comp] for comp in nearest_neighbors]
     return nearest_neighbors
+
+
+def visualize(m, save_path, num_topics, num_words, vocab, lang, show_emb=True):
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    print(lang)
+    m.eval()
+    logvisual = open(os.path.join(save_path, 'log.txt'), 'a+')
+    queries = load_keywords_by_lang(lang)
+
+    # visualize topics using monte carlo
+    with torch.no_grad():
+        print('#' * 100)
+        print('Visualize topics...')
+        topics_words = []
+        gammas = m.get_beta()
+        for k in range(num_topics):
+            gamma = gammas[k]
+            top_words = list(gamma.cpu().numpy().argsort()[-num_words + 1:][::-1])
+            topic_words = [vocab[a] for a in top_words]
+            topics_words.append(' '.join(topic_words))
+            print('Topic {}: {}'.format(k, topic_words))
+            logvisual.write('Topic{},{}'.format(k, topic_words))
+
+        if show_emb:
+            # visualize word embeddings by using V to get nearest neighbors
+            print('#' * 100)
+            print('Visualize word embeddings by using output embedding matrix')
+            try:
+                embeddings = m.rho.weight  # Vocab_size x E
+            except:
+                embeddings = m.rho  # Vocab_size x E
+            neighbors = []
+            for word in queries:
+                logvisual.write('word: {} .. neighbors: {}'.format(
+                    word, nearest_neighbors(word, embeddings, vocab)))
+
+                print('word: {} .. neighbors: {}'.format(
+                    word, nearest_neighbors(word, embeddings, vocab)))
+            print('#' * 100)
+    logvisual.write('#' * 100)
+    logvisual.close()

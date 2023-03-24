@@ -16,12 +16,12 @@ from gensim.models import KeyedVectors
 
 from src.topicModeling import data
 from src.topicModeling.etm import ETM
-from src.topicModeling.utils import nearest_neighbors, get_topic_coherence, get_topic_diversity
+from src.topicModeling.utils import nearest_neighbors, get_topic_coherence, get_topic_diversity, visualize
 
 parser = argparse.ArgumentParser(description='The Embedded Topic Model')
 
 # data and file related arguments
-parser.add_argument('--lang_code', type=str, default="en", help="The language of the data")
+parser.add_argument('--lang', type=str, default="en", help="The language of the data")
 parser.add_argument('--dataset', type=str, default='eu', help='The name of corpus, either eu or un')
 parser.add_argument('--month', type=str, default="2014-01", help="The month of language data/tp/eu/cs/2014-01/")
 
@@ -65,9 +65,19 @@ parser.add_argument('--td', type=int, default=0, help='whether to compute topic 
 args = parser.parse_args()
 
 #########################
-data_path = f"output/preprocessed/tp/{args.dataset}/{args.lang_code}/{args.month}"
+data_path = f"data/tp/{args.dataset}/{args.lang}/{args.month}"
 emb_path = os.path.join(data_path, f'embeddings.wordvectors')
-save_path = f"output/models/tp/{args.dataset}/{args.lang_code}/{args.month}"
+save_path_dataset = f"output/tp/{args.dataset}"
+if not os.path.exists(save_path_dataset):
+    os.mkdir(save_path_dataset)
+
+save_path_lang = os.path.join(save_path_dataset, args.lang)
+if not os.path.exists(save_path_lang):
+    os.mkdir(save_path_lang)
+
+save_path = f"output/tp/{args.dataset}/{args.lang}/{args.month}"
+if not os.path.exists(save_path):
+    os.mkdir(save_path)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -218,48 +228,6 @@ def train(epoch):
     return val_loss
 
 
-def visualize(m, show_emb=True):
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
-
-    m.eval()
-    logvisual = open(os.path.join(save_path, 'log.txt'), 'a+')
-    queries = ['refugee', 'immigrant']
-
-    # visualize topics using monte carlo
-    with torch.no_grad():
-        print('#' * 100)
-        print('Visualize topics...')
-        topics_words = []
-        gammas = m.get_beta()
-        for k in range(args.num_topics):
-            gamma = gammas[k]
-            top_words = list(gamma.cpu().numpy().argsort()[-args.num_words + 1:][::-1])
-            topic_words = [vocab[a] for a in top_words]
-            topics_words.append(' '.join(topic_words))
-            print('Topic {}: {}'.format(k, topic_words))
-            logvisual.write('Topic {}: {}'.format(k, topic_words))
-
-        if show_emb:
-            # visualize word embeddings by using V to get nearest neighbors
-            print('#' * 100)
-            print('Visualize word embeddings by using output embedding matrix')
-            try:
-                embeddings = m.rho.weight  # Vocab_size x E
-            except:
-                embeddings = m.rho  # Vocab_size x E
-            neighbors = []
-            for word in queries:
-                logvisual.write('word: {} .. neighbors: {}'.format(
-                    word, nearest_neighbors(word, embeddings, vocab)))
-
-                print('word: {} .. neighbors: {}'.format(
-                    word, nearest_neighbors(word, embeddings, vocab)))
-            print('#' * 100)
-    logvisual.write('#' * 100)
-    logvisual.close()
-
-
 def evaluate(m, source, tc=False, td=False):
     """Compute perplexity on document completion.
     """
@@ -300,7 +268,7 @@ def evaluate(m, source, tc=False, td=False):
                 optimizer.param_groups[0]['lr'], val_cur_kl_theta, val_cur_loss,
                 val_cur_real_loss))
             print('*' * 100)
-            val_loss = round(math.exp(val_cur_real_loss), 1)
+            val_loss = round(np.exp(val_cur_real_loss), 1)
             print(f'val_loss {val_loss}')
             return val_loss
 
@@ -343,7 +311,7 @@ def evaluate(m, source, tc=False, td=False):
                 cnt += 1
 
             cur_loss = acc_loss / cnt
-            ppl_dc = round(math.exp(cur_loss), 1)
+            ppl_dc = round(np.exp(cur_loss), 1)
             print('*' * 100)
             print('{} Doc Completion PPL: {}'.format(source.upper(), ppl_dc))
             print('*' * 100)
@@ -367,15 +335,11 @@ if args.mode == 'train':
     best_epoch = 0
     best_val_loss = 1e50
     all_val_loss = []
-    # print('\n')
-    # print('Visualizing model quality before training...')
-    # visualize(model)
-    # print('\n')
 
     for epoch in range(1, args.epochs):
         val_loss = train(epoch)
         ###
-        print('come here')
+
         # val_loss = evaluate(model, 'val')
         if val_loss < best_val_loss:
             filename = ckpt + '_val_loss_' + str(val_loss) + '_epoch_' + str(epoch)
@@ -391,8 +355,8 @@ if args.mode == 'train':
             if args.anneal_lr and (
                     len(all_val_loss) > args.nonmono and val_loss > min(all_val_loss[:-args.nonmono]) and lr > 1e-5):
                 optimizer.param_groups[0]['lr'] /= args.lr_factor
-        # if epoch % args.visualize_every == 0:
-        #     visualize(model)
+        if epoch % args.visualize_every == 0:
+           visualize(model, save_path, args.num_topics, args.num_words, vocab, args.lang)
         all_val_loss.append(val_loss)
 
     min_val_loss = min(all_val_loss)
@@ -400,13 +364,14 @@ if args.mode == 'train':
     files = [x for x in os.listdir(save_path)]
     files_dict = {int(file.split('_')[-1]): file for file in files if file.startswith(f"etm_tweets_K_{args.num_topics}")
                   }
+    print(files_dict)
     max_id = sorted(files_dict)[-1]
     filepath = files_dict[max_id]
     # other files in the dictionary:
     files_dict.pop(max_id)
     to_delete_files = list(files_dict.values())
     # save the best model
-    print(f"best model {filepath} for lang {args.lang_code}")
+    print(f"best model {filepath} for lang {args.lang}")
     best_model_path = os.path.join(save_path, filepath)
     with open(best_model_path, 'rb') as f:
         model = torch.load(f)
@@ -459,7 +424,7 @@ else:
     print('device:', device)
     model = model.to(device)
     model.eval()
-    # visualize(model)
+    visualize(model, save_path, args.num_topics, args.num_words, vocab, args.lang)
     with torch.no_grad():
         # get document completion perplexities
         test_ppl = evaluate(model, 'test', tc=args.tc, td=args.td)

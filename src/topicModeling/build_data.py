@@ -287,7 +287,7 @@ def processing_all_langs(query="eu"):
 
 
 def main(lang="", query="eu"):
-    if lang is not "":
+    if lang != "":
         processing_by_lang(lang, query)
     else:
         processing_all_langs(query)
@@ -296,4 +296,5 @@ def main(lang="", query="eu"):
 if __name__ == '__main__':
     import plac
 
+    # read_data(data_path, output_path)
     plac.call(main)

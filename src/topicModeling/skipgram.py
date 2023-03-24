@@ -29,6 +29,14 @@ parser.add_argument('--iters', type=int, default=20, help='number of iterationst
 args = parser.parse_args()
 
 
+
+pageTypes_eu = ["Blogs", "Forums", "Instagram", "News", "Reddit", "Review", "Tumblr", "Twitter", "YouTube"]
+# review only for english
+
+pageTypes_un = ["Blogs", "Facebook", "Forums", "Instagram", "News", "Reddit", "Tumblr", "Twitter", "YouTube"]
+
+
+
 # Class for a memory-friendly iterator over the dataset
 class MySentences(object):
     def __init__(self, filename):
@@ -56,6 +64,7 @@ def processing_one_file(file, outputfile):
 
 def processing_files_by_lang(lang, query):
     data_folder = os.path.join(f"data/tp/")
+
     lang_folder = os.path.join(data_folder, query, lang)
     print(lang_folder)
     for foldername in os.listdir(lang_folder):
@@ -86,5 +95,5 @@ def main(lang="", query="eu"):
 
 
 if __name__ == '__main__':
-    main(args.lang, args.query)
-
+    # main(args.lang, args.query)
+    processing_one_file("data/preprocessed/eu/cs/Twitter/2018-06.csv", "data/tp/eu/cs/embeddings.wordvectors")
