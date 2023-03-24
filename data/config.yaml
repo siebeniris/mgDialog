@@ -12,3 +12,17 @@ langs:
     - pl
     - sk
     - sv
+keywords:
+    - cs: ["uprchl", "migrant"]
+    - da: ["flygtning", "migrant"]
+    - de: ["flüchtling", "migrant"]
+    - el: ["πρόσφυγας", "μετανάστης"]
+    - en: ["refugee", "migrant"]
+    - es: ["refugiado", "refugiada", "migración"]
+    - fr: ["réfugié", "migrant"]
+    - hu: ["menekült", "migráns"]
+    - it: ["rifugiat", "migrant"]
+    - nl: ["vluchteling", "migrant"]
+    - pl: ["uchodźca", "migrant"]
+    - sk: ["utečenec", "migrant"]
+    - sv: ["flykting", "migrant"]
