@@ -4,7 +4,7 @@
 #SBATCH --job-name=preprocess
 #SBATCH --output=%j.out
 #SBATCH --time=30:00:00
-#SBATCH --mem=256GB
+#SBATCH --mem=64GB
 
 
 lang=$1
