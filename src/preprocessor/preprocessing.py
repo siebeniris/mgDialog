@@ -17,7 +17,7 @@ except ImportError:
     from yaml import Loader, Dumper
 
 from src.preprocessor.defines import *
-from src.utils.load_lists import pageTypes_eu, pageTypes_un
+from src.utils.load_lists import load_pageTypes
 
 pandarallel.initialize()
 
@@ -68,10 +68,7 @@ def create_dir(dirpath):
 
 
 def processing_by_lang(lang, query="eu"):
-    if query == "eu":
-        pageTypes = pageTypes_eu
-    else:
-        pageTypes = pageTypes_un
+    pageTypes = load_pageTypes(query)
 
     for pageType in pageTypes:
         # from pageType data.
