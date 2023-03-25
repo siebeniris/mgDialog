@@ -17,8 +17,6 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-from src.utils.read_files import load_datasize_twitter
-
 # Maximum / minimum document frequency
 max_df = 0.7
 min_df = 10  # choose desired value for min_df
@@ -253,7 +251,7 @@ def read_one_file(data_path, output_path):
     df = df[df["LEN"] > 2]
 
     if len(df) > 0:
-        df = df[["resourceId", "pageTypeName", "countryCode", "preprocessed_text"]]
+        df = df[["resourceId", "date", "countryCode", "preprocessed_text"]]
 
         df = shuffle(df)
         print('size of df', len(df))
