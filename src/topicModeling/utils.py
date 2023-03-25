@@ -131,11 +131,16 @@ def visualize(m, save_path, num_topics, num_words, vocab, lang, show_emb=True):
                 embeddings = m.rho  # Vocab_size x E
             neighbors = []
             for word in queries:
-                logvisual.write('word: {} .. neighbors: {}'.format(
-                    word, nearest_neighbors(word, embeddings, vocab)))
+                try:
+                    nearest_neighbors_ = nearest_neighbors(word, embeddings, vocab)
 
-                print('word: {} .. neighbors: {}'.format(
-                    word, nearest_neighbors(word, embeddings, vocab)))
+                    logvisual.write('word: {} .. neighbors: {}'.format(
+                        word, nearest_neighbors_))
+
+                    print('word: {} .. neighbors: {}'.format(
+                        word, nearest_neighbors_))
+                except Exception as msg:
+                    print(f"{msg}")
             print('#' * 100)
     logvisual.write('#' * 100)
     logvisual.close()

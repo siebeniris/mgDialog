@@ -8,7 +8,6 @@ import pandas as pd
 import torch
 import numpy as np
 import os
-import math
 import shutil
 
 from torch import optim
@@ -22,8 +21,10 @@ parser = argparse.ArgumentParser(description='The Embedded Topic Model')
 
 # data and file related arguments
 parser.add_argument('--lang', type=str, default="en", help="The language of the data")
-parser.add_argument('--dataset', type=str, default='eu', help='The name of corpus, either eu or un')
-parser.add_argument('--month', type=str, default="2014-01", help="The month of language data/tp/eu/cs/2014-01/")
+parser.add_argument('--query', type=str, default='eu', help='The name of corpus, either eu or un')
+parser.add_argument("--pageType", type=str, default="Twitter", help="PageType of the data data/tp/eu/cs_Twitter")
+parser.add_argument("--year", type=str, default=None, help="The year of the data data/tp/eu/cs_Twitter_2014")
+parser.add_argument('--month', type=str, default=None, help="The month of language data/tp/eu/cs_Twitter_2014-01/")
 
 parser.add_argument('--batch_size', type=int, default=256, help='Input batch size for training')
 # model-related arguments
@@ -65,19 +66,24 @@ parser.add_argument('--td', type=int, default=0, help='whether to compute topic 
 args = parser.parse_args()
 
 #########################
-data_path = f"data/tp/{args.dataset}/{args.lang}/{args.month}"
+
+if args.year is not None:
+    data_path = f"data/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}_{args.year}"
+elif args.month is not None:
+    data_path = f"data/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}_{args.year}-{args.month}"
+else:
+    data_path = f"data/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}"
+
+print(f"datapath -> {data_path}")
 emb_path = os.path.join(data_path, f'embeddings.wordvectors')
-save_path_dataset = f"output/tp/{args.dataset}"
-if not os.path.exists(save_path_dataset):
-    os.mkdir(save_path_dataset)
 
-save_path_lang = os.path.join(save_path_dataset, args.lang)
-if not os.path.exists(save_path_lang):
-    os.mkdir(save_path_lang)
+sub_path = "/".join(data_path.split("/")[1:])
+save_path = os.path.join("output", sub_path)
+print(f"save path -> {save_path}")
 
-save_path = f"output/tp/{args.dataset}/{args.lang}/{args.month}"
 if not os.path.exists(save_path):
-    os.mkdir(save_path)
+    os.makedirs(save_path)
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -141,7 +147,7 @@ if not args.train_embeddings:
     args.embeddings_dim = embeddings.size()
 
 print('=*' * 100)
-print('Training an Embedded Topic Model on {} with the following settings: {}'.format(args.dataset.upper(), args))
+print('Training an Embedded Topic Model on {} with the following settings: {}'.format(args.query.upper(), args))
 print('=*' * 100)
 
 # define checkpoint
@@ -155,7 +161,7 @@ else:
     ckpt = os.path.join(save_path,
                         'etm_{}_K_{}_Htheta_{}_Optim_{}_Clip_{}_ThetaAct_{}_Lr_{}_Bsz_{}_RhoSize_{}_trainEmbeddings_{}'
                         .format(
-                            args.dataset, args.num_topics, args.t_hidden_size, args.optimizer, args.clip,
+                            args.query, args.num_topics, args.t_hidden_size, args.optimizer, args.clip,
                             args.theta_act,
                             args.lr, args.batch_size, args.rho_size, args.train_embeddings))
     print(f"ckpt : {ckpt}")
@@ -362,7 +368,7 @@ if args.mode == 'train':
     min_val_loss = min(all_val_loss)
 
     files = [x for x in os.listdir(save_path)]
-    files_dict = {int(file.split('_')[-1]): file for file in files if file.startswith(f"etm_tweets_K_{args.num_topics}")
+    files_dict = {int(file.split('_')[-1]): file for file in files if file.startswith(f"etm_{args.query}_K_{args.num_topics}")
                   }
     print(files_dict)
     max_id = sorted(files_dict)[-1]
@@ -372,6 +378,7 @@ if args.mode == 'train':
     to_delete_files = list(files_dict.values())
     # save the best model
     print(f"best model {filepath} for lang {args.lang}")
+
     best_model_path = os.path.join(save_path, filepath)
     with open(best_model_path, 'rb') as f:
         model = torch.load(f)
