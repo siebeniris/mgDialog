@@ -1,9 +1,10 @@
-import gensim
+import glob
 import os
 import pandas as pd
 import argparse
 import multiprocessing
 
+import gensim
 from yaml import load
 
 try:
@@ -17,6 +18,7 @@ parser = argparse.ArgumentParser(description='The Embedded Topic Model')
 ### data and file related arguments
 parser.add_argument('--lang', type=str, default="en")
 parser.add_argument('--query', type=str, default="eu")
+parser.add_argument('--pageType', type=str, default="Twitter")
 
 parser.add_argument('--dim_rho', type=int, default=300, help='dimensionality of the word embeddings')
 parser.add_argument('--min_count', type=int, default=2, help='minimum term frequency (to define the vocabulary)')
@@ -62,38 +64,44 @@ def processing_one_file(file, outputfile):
     word_vectors.save(outputfile)
 
 
-def processing_files_by_lang(lang, query):
-    data_folder = os.path.join(f"data/tp/")
+def processing_files_by_lang(pageType, lang, query):
 
-    lang_folder = os.path.join(data_folder, query, lang)
+    lang_folder = os.path.join("data/tp", query, lang)
     print(lang_folder)
-    for foldername in os.listdir(lang_folder):
-        month_folder = os.path.join(lang_folder, foldername)
-        csv_file = os.path.join(month_folder, f"{foldername}.csv")
-        outputfile = os.path.join(month_folder, "embeddings.wordvectors")
-        if not os.path.exists(outputfile):
-            processing_one_file(csv_file, outputfile)
-        else:
-            print(f"outputfile {outputfile} exists!")
+
+    for fpath in glob.glob(os.path.join(lang_folder, f"{lang}_{pageType}*")):
+        foldername = os.path.basename(fpath)
+        folderpath = os.path.join(lang_folder, foldername)
+
+        if os.path.isdir(folderpath):
+            print("folder=> ", folderpath)
+
+            csvfile = os.path.join(folderpath, foldername+".csv")
+            if os.path.exists(csvfile):
+                outputfile = os.path.join(folderpath, "embeddings.wordvectors")
+
+                if not os.path.exists(outputfile):
+                    processing_one_file(csvfile, outputfile)
+                else:
+                    print(f"outputfile {outputfile} exists!")
 
 
-def preprocessing_all_langs(query="eu"):
+def preprocessing_all_langs(pageType, query="eu"):
     with open("data/config.yaml") as f:
         langs = load(f, Loader=Loader)["langs"]
 
     for lang in langs:
         print("processing lang ", lang)
-        processing_files_by_lang(lang, query)
+        processing_files_by_lang(pageType, lang, query)
 
 
-def main(lang="", query="eu"):
+def main(pageType, lang="", query="eu"):
     if lang != "":
-        processing_files_by_lang(lang, query)
+        processing_files_by_lang(pageType, lang, query)
     else:
 
-        preprocessing_all_langs(query)
+        preprocessing_all_langs(pageType, query)
 
 
 if __name__ == '__main__':
-    # main(args.lang, args.query)
-    processing_one_file("data/preprocessed/eu/cs/Twitter/2018-06.csv", "data/tp/eu/cs/embeddings.wordvectors")
+    main(args.pageType, args.lang, args.query)

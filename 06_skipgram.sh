@@ -7,8 +7,9 @@
 #SBATCH --mem=256GB
 
 
-lang=$1
-query=$2
+pageType=$1
+lang=$2
+query=$3
 
 
 source $HOME/.bashrc
@@ -16,5 +17,5 @@ conda activate mg
 
 cd $HOME/mgDialog
 
-python src/topicModeling/skipgram.py --lang "$lang" --query "$query"
+python src/topicModeling/skipgram.py --pageType "$pageType" --lang "$lang" --query "$query"
 
