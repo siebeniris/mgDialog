@@ -49,7 +49,7 @@ def combine_data_by_size(pageType, lang, query):
         year_file_dict = defaultdict(list)
         for file in os.listdir(inputfolder):
             if file.endswith(".csv"):
-                year, month = file.replace(".csv", "")
+                year, month = file.replace(".csv", "").split("_")
                 year_file_dict[year].append(os.path.join(inputfolder, file))
 
         for year, filepaths in year_file_dict.items():
@@ -67,7 +67,7 @@ def combine_data_by_size(pageType, lang, query):
 
         for file in os.listdir(inputfolder):
             if file.endswith(".csv"):
-                year, month = file.replace(".csv", "")
+                year, month = file.replace(".csv", "").split("_")
                 filepath = os.path.join(inputfolder, file)
                 df = pd.read_csv(filepath, low_memory=False, lineterminator="\n")
                 df = df[fields]
