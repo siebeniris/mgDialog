@@ -193,8 +193,10 @@ def build_data(sentence_list, outputdir="data/tp/eu/en/Twitter/"):
     print('splitting bow intro token/value pairs and saving to disk...')
 
     def split_bow(bow_in, n_docs):
-        indices = [[w for w in bow_in[doc, :].indices] for doc in range(n_docs)]
-        counts = [[c for c in bow_in[doc, :].data] for doc in range(n_docs)]
+        indices = np.array([[w for w in bow_in[doc, :].indices] for doc in range(n_docs)], dtype=object)
+        counts = np.array([[c for c in bow_in[doc, :].data] for doc in range(n_docs)], dtype=object)
+        print(indices)
+        print(counts)
         return indices, counts
 
     ############# bow train #####################################
@@ -274,7 +276,8 @@ def processing_by_lang(pageType, lang, query="eu"):
                 os.makedirs(outputfolder)
 
             texts = read_one_file(file, os.path.join(outputfolder, filename))
-            build_data(texts, outputdir=outputfolder + '/')
+            if len(texts)>0:
+                build_data(texts, outputdir=outputfolder + '/')
 
 
 def processing_all_langs(pageType, query="eu"):
