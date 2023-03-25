@@ -195,8 +195,6 @@ def build_data(sentence_list, outputdir="data/tp/eu/en/Twitter/"):
     def split_bow(bow_in, n_docs):
         indices = np.array([[w for w in bow_in[doc, :].indices] for doc in range(n_docs)], dtype=object)
         counts = np.array([[c for c in bow_in[doc, :].data] for doc in range(n_docs)], dtype=object)
-        print(indices)
-        print(counts)
         return indices, counts
 
     ############# bow train #####################################
