@@ -20,4 +20,26 @@ def load_keywords_by_lang(lang):
     keywords_dict = {x: item[x] for item in keywords for x in item}
     return keywords_dict[lang]
 
-    # return keywords_dict.get(lang, [])
+
+def load_datasize_twitter(lang, query):
+    with open("data/config.yaml") as f:
+        data = load(f, Loader=Loader)
+
+    if query == "eu":
+        datasizes = data["datasize_twitter_eu"]
+    else:
+        datasizes = data["datasize_twitter_un"]
+    datasize_dict = {x: item[x] for item in datasizes for x in item}
+    return datasize_dict[lang]
+
+
+def load_datasize_news(lang, query):
+    with open("data/config.yaml") as f:
+        data = load(f, Loader=Loader)
+
+    if query == "eu":
+        datasizes = data["datasize_news_eu"]
+    else:
+        datasizes = data["datasize_news_un"]
+    datasize_dict = {x: item[x] for item in datasizes for x in item}
+    return datasize_dict[lang]
