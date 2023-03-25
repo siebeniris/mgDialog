@@ -1,3 +1,4 @@
+import glob
 import os
 import pickle
 
@@ -16,12 +17,14 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
+from src.utils.read_files import load_datasize_twitter
+
 # Maximum / minimum document frequency
 max_df = 0.7
 min_df = 10  # choose desired value for min_df
 
 
-def build_data(sentence_list, outputdir="data/tp/eu/en/2014-01"):
+def build_data(sentence_list, outputdir="data/tp/eu/en/Twitter/"):
     # a list of sentences
     # Create count vectorizer
     print('counting document frequency of words...')
@@ -241,60 +244,58 @@ def build_data(sentence_list, outputdir="data/tp/eu/en/2014-01"):
     print('*************')
 
 
-def read_data(data_path, output_path):
+def read_one_file(data_path, output_path):
     print(f"data path: {data_path}")
     df = pd.read_csv(data_path, low_memory=False, lineterminator="\n")
     print('size of df:', len(df))
     df = df.dropna(subset=['preprocessed_text'])
     df = df.drop_duplicates(subset='preprocessed_text')
-    df["LEN"] = df["preprocessed_text"].str.split(" ").str.len()
     df = df[df["LEN"] > 2]
-    df = df[["resourceId", "pageTypeName", "countryCode", "preprocessed_text"]]
 
-    df = shuffle(df)
-    print('size of df', len(df))
-    df.to_csv(output_path, index=False)
-    texts = df['preprocessed_text'].tolist()
-    return texts
+    if len(df) > 0:
+        df = df[["resourceId", "pageTypeName", "countryCode", "preprocessed_text"]]
+
+        df = shuffle(df)
+        print('size of df', len(df))
+        df.to_csv(output_path, index=False)
+        texts = df['preprocessed_text'].tolist()
+        return texts
+    else:
+        return []
 
 
-def processing_by_lang(lang, query="eu"):
-    folderdir = os.path.join("data/preprocessed", query, lang)
-    output_dir = f"data/tp/{query}/{lang}"
-    if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
+def processing_by_lang(pageType, lang, query="eu"):
+    folderdir = f"data/tp/{query}/{lang}"
 
-    for file in tqdm(os.listdir(folderdir)):
+    for file in tqdm(glob.glob(os.path.join(folderdir, f"{lang}_{pageType}*.csv"))):
         if file.endswith(".csv"):
-            filepath = os.path.join(folderdir, file)
-            print(f"processing file {filepath}")
-            month = file.replace(".csv", "")
-            output_dir_month = os.path.join(output_dir, month)
-            if not os.path.exists(output_dir_month):
-                os.mkdir(output_dir_month)
+            filename = os.path.basename(file)
+            dirname = filename.replace(".csv", "")  # cs_Twitter
+            outputfolder = os.path.join(folderdir, dirname)
+            if not os.path.exists(outputfolder):
+                os.makedirs(outputfolder)
 
-            texts = read_data(filepath, os.path.join(output_dir_month, file))
-            build_data(texts, outputdir=output_dir_month + '/')
+            texts = read_one_file(file, os.path.join(outputfolder, filename))
+            build_data(texts, outputdir=outputfolder + '/')
 
 
-def processing_all_langs(query="eu"):
+def processing_all_langs(pageType, query="eu"):
     with open("data/config.yaml") as f:
         langs = load(f, Loader=Loader)["langs"]
 
     for lang in langs:
         print("processing lang ", lang)
-        processing_by_lang(lang, query)
+        processing_by_lang(pageType, lang, query)
 
 
-def main(lang="", query="eu"):
+def main(pageType, lang="", query="eu"):
     if lang != "":
-        processing_by_lang(lang, query)
+        processing_by_lang(pageType, lang, query)
     else:
-        processing_all_langs(query)
+        processing_all_langs(pageType, query)
 
 
 if __name__ == '__main__':
     import plac
 
-    # read_data(data_path, output_path)
     plac.call(main)
