@@ -10,6 +10,10 @@ def combine_data_by_size(pageType, lang, query):
     # first deal with twitter, other types needs to be sentence tokenized.
     inputfolder = f"data/preprocessed/{query}/{lang}/{pageType}"
     outputfolder = f"data/tp/{query}/{lang}/"
+    if not os.path.exists(outputfolder):
+        os.makedirs(outputfolder)
+
+
     # lang_pageType_year
     years = [2014, 2015, 2018, 2019, 2020]
 
