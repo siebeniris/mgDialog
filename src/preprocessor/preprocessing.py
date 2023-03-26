@@ -67,62 +67,59 @@ def create_dir(dirpath):
         os.mkdir(dirpath)
 
 
-def processing_by_lang(lang, query="eu"):
-    pageTypes = load_pageTypes(query)
+def processing_by_lang(pageType, lang, query="eu"):
+    folderdir = os.path.join(f"data/pageTypes/{query}/{lang}/{pageType}")
+    outputdir_query = os.path.join("data/preprocessed", query)
+    create_dir(outputdir_query)
 
-    for pageType in pageTypes:
-        # from pageType data.
-        folderdir = os.path.join(f"data/pageTypes/{query}/{lang}/{pageType}")
-        outputdir_query = os.path.join("data/preprocessed", query)
-        create_dir(outputdir_query)
+    outputdir_lang = os.path.join("data/preprocessed", query, lang)
+    create_dir(outputdir_lang)
 
-        outputdir_lang = os.path.join("data/preprocessed", query, lang)
-        create_dir(outputdir_lang)
+    outputdir_pageType = os.path.join("data/preprocessed", query, lang, pageType)
+    create_dir(outputdir_pageType)
 
-        outputdir_pageType = os.path.join("data/preprocessed", query, lang, pageType)
-        create_dir(outputdir_pageType)
+    stopwords = stopwordsiso.stopwords(lang)
 
-        stopwords = stopwordsiso.stopwords(lang)
+    for file in tqdm(os.listdir(folderdir)):
+        if file.endswith(".csv"):
+            filepath = os.path.join(folderdir, file)
+            outputfile = os.path.join(outputdir_pageType, file)
 
-        for file in tqdm(os.listdir(folderdir)):
-            if file.endswith(".csv"):
-                filepath = os.path.join(folderdir, file)
-                outputfile = os.path.join(outputdir_pageType, file)
+            if not os.path.exists(outputfile):
+                print(f"processing file {filepath}")
+                df = pd.read_csv(filepath, low_memory=False, lineterminator="\n")
 
-                if not os.path.exists(outputfile):
-                    print(f"processing file {filepath}")
-                    df = pd.read_csv(filepath, low_memory=False, lineterminator="\n")
+                df["preprocessed_text"] = df["fullText"].parallel_apply(cleaning_text_for_tp,
+                                                                        args=(stopwords, lang))
 
-                    df["preprocessed_text"] = df["fullText"].parallel_apply(cleaning_text_for_tp,
-                                                                            args=(stopwords, lang))
+                df = df.dropna(subset=["preprocessed_text"])
+                df["LEN"] = df["preprocessed_text"].astype(str).str.split(" ").str.len()
+                df = df[["resourceId", "date", "preprocessed_text", "countryCode", "pageTypeName", "month", "fullText",
+                         "LEN"]]
 
-                    df = df.dropna(subset=["preprocessed_text"])
-                    df["LEN"] = df["preprocessed_text"].astype(str).str.split(" ").str.len()
-                    df = df[["resourceId", "date", "preprocessed_text", "countryCode", "pageTypeName", "month", "fullText", "LEN"]]
-
-                    print(f"output to {outputfile}")
-                    df.to_csv(outputfile, index=False)
-                else:
-                    print(
-                        f"outputfile {outputfile} exists!"
-                    )
+                print(f"output to {outputfile}")
+                df.to_csv(outputfile, index=False)
+            else:
+                print(
+                    f"outputfile {outputfile} exists!"
+                )
 
 
-def preprocessing_all_langs(query="eu"):
+def preprocessing_all_langs(pageType, query="eu"):
     with open("data/config.yaml") as f:
         langs = load(f, Loader=Loader)["langs"]
 
     for lang in langs:
         print("processing lang ", lang)
-        processing_by_lang(lang, query)
+        processing_by_lang(pageType, lang, query)
 
 
-def main(lang="", query="eu"):
+def main(pageType, lang="", query="eu"):
     if lang != "":
-        processing_by_lang(lang, query)
+        processing_by_lang(pageType, lang, query)
     else:
 
-        preprocessing_all_langs(query)
+        preprocessing_all_langs(pageType, query)
 
 
 if __name__ == '__main__':
