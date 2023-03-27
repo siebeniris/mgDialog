@@ -25,10 +25,13 @@ def data_split(inputfile, datasize):
             outputfile_name = inputfile.replace(".csv", f"_{idx}.csv")
             print(f"save to {outputfile_name}")
             df_group.to_csv(outputfile_name, index=False)
+        print(f"remove file {inputfile}")
+        os.remove(inputfile)
 
 
 def split_data_for_preprocessing(pageType, lang, query):
     datasize = 200000
+
     inputfolder = os.path.join("data/pageTypes", query, lang, pageType)
     outputfolder = os.path.join("data/preprocessed", query, lang, pageType)
     for file in os.listdir(inputfolder):
