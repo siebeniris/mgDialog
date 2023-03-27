@@ -18,6 +18,7 @@ def data_split(inputfile, datasize):
     if file_size > datasize:
         print(f"processsing {inputfile}")
         chunks = file_size // datasize
+        chunks = chunks * 100
         df = pd.read_csv(inputfile, low_memory=False, lineterminator="\n")
         for idx, df_group in df.groupby(np.arange(len(df)) // chunks):
 
