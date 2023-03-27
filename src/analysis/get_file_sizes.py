@@ -19,7 +19,7 @@ def data_split(inputfile, datasize):
         print(f"processsing {inputfile}")
         chunks = file_size // datasize
         df = pd.read_csv(inputfile, low_memory=False, lineterminator="\n")
-        for idx, df_group in df.groupby(np.arange(len(df) // chunks)):
+        for idx, df_group in df.groupby(np.arange(len(df)) // chunks):
 
             outputfile_name = inputfile.replace(".csv", f"_{idx}.csv")
             print(f"save to {outputfile_name}")
