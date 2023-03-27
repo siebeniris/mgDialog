@@ -86,6 +86,7 @@ def processing_by_lang(pageType, lang, query="eu"):
             outputfile = os.path.join(outputdir_pageType, file)
 
             if not os.path.exists(outputfile):
+
                 print(f"processing file {filepath}")
                 df = pd.read_csv(filepath, low_memory=False, lineterminator="\n")
 
@@ -99,10 +100,11 @@ def processing_by_lang(pageType, lang, query="eu"):
 
                 print(f"output to {outputfile}")
                 df.to_csv(outputfile, index=False)
-            else:
-                print(
-                    f"outputfile {outputfile} exists!"
-                )
+
+        else:
+            print(
+                f"outputfile {outputfile} exists!"
+            )
 
 
 def preprocessing_all_langs(pageType, query="eu"):
