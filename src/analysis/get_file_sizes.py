@@ -16,10 +16,13 @@ def get_largest_file_size(inputfolder="data/preprocessed/"):
 def data_split(inputfile, outputfile, datasize):
     file_size = os.path.getsize(inputfile)
     if file_size > datasize:
+        print(f"processsing {inputfile}")
         chunks = file_size // datasize
         df = pd.read_csv(inputfile, low_memory=False, lineterminator="\n")
         for idx, df_group in df.groupby(np.arange(len(df) // chunks)):
+
             outputfile_name = outputfile.replace(".csv", f"_{idx}.csv")
+            print(f"save to {outputfile_name}")
             df_group.to_csv(outputfile_name, index=False)
 
 
