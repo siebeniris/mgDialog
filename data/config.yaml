@@ -13,7 +13,7 @@ langs:
     - sk
     - sv
 keywords:
-    - cs: ["uprchl", "migrant"]
+    - cs: ["uprchl", "migrant", "imigrant", "imigra", "migra", "azyl"]
     - da: ["flygtning", "migrant"]
     - de: ["flüchtling", "migrant"]
     - el: ["πρόσφυγας", "μετανάστης"]
@@ -27,11 +27,11 @@ keywords:
     - sk: ["utečenec", "migrant"]
     - sv: ["flykting", "migrant"]
 datasize_twitter_eu:
-    - cs: "low"
+    - cs: "low"  # no month or year
     - da: "low"
-    - de: "medium"
+    - de: "medium"  # year
     - el: "low"
-    - en: "high"
+    - en: "high"   # year and month
     - es: "medium"
     - fr: "medium"
     - hu: "low"
