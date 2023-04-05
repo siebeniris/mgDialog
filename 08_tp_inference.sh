@@ -21,4 +21,4 @@ cd $HOME/mgDialog
 
 #python src/topicModeling/skipgram.py --pageType "$pageType" --lang "$lang" --query "$query"
 
-python -m src.topicModeling.main --pageType "$pageType" --lang "$lang" --query "$query"  --num_topics "$num_topics" --year "$year" --month "$month" --epochs 200
+ python -m src.topicModeling.inference --query eu --pageType Twitter --num_topics 10
