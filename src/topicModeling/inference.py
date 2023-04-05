@@ -198,7 +198,7 @@ def get_theta_weights_avg(model, keywords, tokens, counts, vocab, batch_size, de
         # +nearest_neighbors+neighbors_keywords_selected
         print(f"keywords {len(ks)}")
 
-        tsne = TSNE(n_components=2, random_state=0, n_iter=10000, perplexity=7)
+        tsne = TSNE(n_components=2, random_state=0, n_iter=10000, perplexity=2)
         T = tsne.fit_transform(n_arr)
 
         colors = ['blue' for x in range(0, len(keywords_selected))] + ['red']

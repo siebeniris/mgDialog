@@ -52,7 +52,7 @@ def cleaning_text_for_tp(text, stopwords, lang):
     for i in inter:
         text_lemmatized.remove(i)
 
-    extra = {"links", "or", "site", "and", "for", "link", "det", "den", "der", "das", "die" }
+    extra = {"links", "or", "site", "and", "for", "link", "det", "den", "der", "das", "die", "title"}
     texts = list(set(text_lemmatized).difference(extra))
     texts = [x for x in texts if len(x)>1]
 

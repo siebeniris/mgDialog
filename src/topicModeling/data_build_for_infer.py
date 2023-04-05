@@ -22,10 +22,13 @@ args = parser.parse_args()
 # get the data directory to save and extract data.
 if args.year is not None:
     data_dir = f"data/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}_{args.year}"
+    to_infer_filepath = os.path.join(data_dir, f'{args.lang}_{args.pageType}_{args.year}.csv')  # sv_Twitter.csv
 elif args.month is not None:
     data_dir = f"data/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}_{args.year}-{args.month}"
+    to_infer_filepath = os.path.join(data_dir, f'{args.lang}_{args.pageType}_{args.year}--{args.month}.csv')  # sv_Twitter.csv
 else:
     data_dir = f"data/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}"
+    to_infer_filepath = os.path.join(data_dir, f'{args.lang}_{args.pageType}.csv')  # sv_Twitter.csv
 
 # file path and data dir
 # data_dir = f'output/preprocessed/forTp/'
@@ -40,7 +43,7 @@ id2word = dict([(j, w) for j, w in enumerate(vocab)])
 
 # to infer file
 
-to_infer_filepath = os.path.join(data_dir, f'{args.lang}_{args.pageType}.csv') # sv_Twitter.csv
+# to_infer_filepath = os.path.join(data_dir, f'{args.lang}_{args.pageType}.csv') # sv_Twitter.csv
 df = pd.read_csv(to_infer_filepath, index_col=0)
 
 docs = df.preprocessed_text.tolist()

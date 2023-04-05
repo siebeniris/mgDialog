@@ -18,6 +18,8 @@ parser = argparse.ArgumentParser(description='The Embedded Topic Model')
 ### data and file related arguments
 parser.add_argument('--lang', type=str, default="en")
 parser.add_argument('--query', type=str, default="eu")
+parser.add_argument('--year', type=str, default=None)
+
 parser.add_argument('--pageType', type=str, default="Twitter")
 
 parser.add_argument('--dim_rho', type=int, default=300, help='dimensionality of the word embeddings')
@@ -64,12 +66,19 @@ def processing_one_file(file, outputfile):
     word_vectors.save(outputfile)
 
 
-def processing_files_by_lang(pageType, lang, query):
+
+def processing_files_by_lang(pageType, lang, query, year=None):
 
     lang_folder = os.path.join("data/tp", query, lang)
     print(lang_folder)
 
-    for fpath in glob.glob(os.path.join(lang_folder, f"{lang}_{pageType}*")):
+    if year!=None:
+        folderpath = os.path.join(lang_folder, f"{lang}_{pageType}_{year}")
+    else:
+        folderpath=os.path.join(lang_folder, f"{lang}_{pageType}")
+
+
+    for fpath in glob.glob(folderpath):
         foldername = os.path.basename(fpath)
         folderpath = os.path.join(lang_folder, foldername)
 
@@ -86,22 +95,25 @@ def processing_files_by_lang(pageType, lang, query):
                     print(f"outputfile {outputfile} exists!")
 
 
-def preprocessing_all_langs(pageType, query="eu"):
+def preprocessing_all_langs(pageType, query="eu", year=None):
     with open("data/config.yaml") as f:
         langs = load(f, Loader=Loader)["langs"]
 
     for lang in langs:
         print("processing lang ", lang)
-        processing_files_by_lang(pageType, lang, query)
+        processing_files_by_lang(pageType, lang, query,year)
 
 
-def main(pageType, lang="", query="eu"):
+def main(pageType, lang="", query="eu", year=None):
     if lang != "":
-        processing_files_by_lang(pageType, lang, query)
+        processing_files_by_lang(pageType, lang, query, year)
     else:
 
-        preprocessing_all_langs(pageType, query)
+        preprocessing_all_langs(pageType, query, year)
 
 
 if __name__ == '__main__':
-    main(args.pageType, args.lang, args.query)
+
+    import plac
+    main(args.pageType, args.lang, args.query, args.year)
+    # plac.call(processing_one_file)

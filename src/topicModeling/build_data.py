@@ -262,6 +262,13 @@ def read_one_file(data_path, output_path):
         return []
 
 
+def processing_one_file(data_path, outputfolder):
+    filename = os.path.basename(data_path)
+    texts = read_one_file(data_path, os.path.join(outputfolder, filename))
+    if len(texts) > 0:
+        build_data(texts, outputdir=outputfolder + '/')
+
+
 def processing_by_lang(pageType, lang, query="eu"):
     folderdir = f"data/tp/{query}/{lang}"
 
@@ -274,7 +281,7 @@ def processing_by_lang(pageType, lang, query="eu"):
                 os.makedirs(outputfolder)
 
             texts = read_one_file(file, os.path.join(outputfolder, filename))
-            if len(texts)>0:
+            if len(texts) > 0:
                 build_data(texts, outputdir=outputfolder + '/')
 
 
@@ -298,3 +305,4 @@ if __name__ == '__main__':
     import plac
 
     plac.call(main)
+    # plac.call(processing_one_file)

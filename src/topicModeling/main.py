@@ -328,7 +328,10 @@ def evaluate(m, source, tc=False, td=False):
                     tc = get_topic_coherence(beta, train_tokens, vocab)
                 if td:
                     print('Computing topic diversity...')
-                    td = get_topic_diversity(beta, 25)
+                    try:
+                        td = get_topic_diversity(beta, 25)
+                    except Exception:
+                        td = get_topic_diversity(beta, 5)
                 tq = tc*td
 
                 return ppl_dc, tc, td, tq
