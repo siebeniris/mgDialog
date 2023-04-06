@@ -12,7 +12,7 @@ SRCEMB=$2
 TGTEMB=$3
 
 source $HOME/.bashrc
-conda activate muse
+conda activate muse_cpu
 
 cd $HOME/mgDialog/MUSE
 
