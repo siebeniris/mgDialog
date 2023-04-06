@@ -1,10 +1,12 @@
 #!/bin/bash
 #
 #SBATCH --partition=prioritized
+#SBATCH --gres=gpu:1
 #SBATCH --job-name=muse
 #SBATCH --output=%j.out
 #SBATCH --time=30:00:00
 #SBATCH --mem=64GB
+#SBATCH --nodelist=nv-ai-01.srv.aau.dk
 
 
 lang=$1
