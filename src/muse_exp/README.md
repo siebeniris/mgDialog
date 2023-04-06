@@ -20,4 +20,12 @@ output are in the folder `data/fasttext/de_eu_Twitter.vec`
 - install pytorch: `conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia`
 - install faiss-gpu: `conda install -c pytorch faiss-gpu`
 
+
+## next steps:
+1. create validation dictionaries between da-da, de-de
+2. run 3.
+
+
+
+
 # transfer data to server.

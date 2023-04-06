@@ -25,11 +25,12 @@ def get_vocab_all(lang, query, pageType="Twitter"):
 def get_overlapping_vecs(lang, query, pageType):
     vocab = get_vocab_all(lang, query, pageType)
     model = load_muse_vecs(lang)
+    vocab_overlap = len(set(list(model.key_to_index.keys())).intersection(set(vocab)))
     print(f"{lang}->{query}->{pageType}: vocab len {len(vocab)}")
     vec_dim = 300
     counter = 0
     with open(f"data/fasttext/{lang}_{query}_{pageType}.vec", "w") as f:
-        f.write(f"{len(vocab)} {vec_dim}\n")
+        f.write(f"{vocab_overlap} {vec_dim}\n")
         for word in vocab:
             try:
                 vec = list(model[word])
