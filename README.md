@@ -1,2 +1,2 @@
-# Migrtion Discourse Analysis
+# Migration Discourse Analysis
 
