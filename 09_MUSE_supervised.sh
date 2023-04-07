@@ -12,7 +12,6 @@
 lang=$1
 SRCEMB=$2
 TGTEMB=$3
-CUDA=$4
 
 source $HOME/.bashrc
 conda activate muse
@@ -20,6 +19,5 @@ conda activate muse
 cd $HOME/mgDialog/MUSE
 
 
-python -m unsupervised --src_lang "$lang" --tgt_lang "$lang" --src_emb "$SRCEMB" --tgt_emb "$TGTEMB" --n_refinement 5 --cuda "$CUDA"
-
+python -m supervised --src_lang "$lang" --tgt_lang "$lang" --src_emb "$SRCEMB" --tgt_emb "$TGTEMB" --n_refinement 5 --dico_train ../data/dictionary/"$lang"-"$lang".txt --cuda True
 

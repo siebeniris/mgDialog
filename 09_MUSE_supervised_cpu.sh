@@ -17,6 +17,5 @@ conda activate muse_cpu
 cd $HOME/mgDialog/MUSE
 
 
-python -m unsupervised --src_lang "$lang" --tgt_lang "$lang" --src_emb "$SRCEMB" --tgt_emb "$TGTEMB" --n_refinement 5 --batch_size 128
-
+python -m supervised --src_lang "$lang" --tgt_lang "$lang" --src_emb "$SRCEMB" --tgt_emb "$TGTEMB" --n_refinement 5 --dico_train ../data/dictionary/"$lang"-"$lang".txt --cuda False
 
