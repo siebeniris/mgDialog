@@ -75,17 +75,17 @@ else:
     data_path = f"data/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}"
 
 print(f"datapath -> {data_path}")
-emb_path = f"data/fasttext/{args.lang}_{args.query}_{args.pageType}.vec"
+# emb_path = f"data/fasttext/{args.lang}_{args.query}_{args.pageType}.vec"
 print(f"emb path")
-# emb_path = os.path.join(data_path, f'embeddings.wordvectors')
+emb_path = os.path.join(data_path, f'embeddings.wordvectors')
 
 sub_path = "/".join(data_path.split("/")[1:])
 if args.year is not None:
-    save_path = f"data/tp_muse/{args.query}/{args.lang}/{args.lang}_{args.pageType}_{args.year}"
+    save_path = f"output/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}_{args.year}"
 elif args.month is not None:
-    save_path = f"data/tp_muse/{args.query}/{args.lang}/{args.lang}_{args.pageType}_{args.year}-{args.month}"
+    save_path = f"output/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}_{args.year}-{args.month}"
 else:
-    save_path = f"data/tp_muse/{args.query}/{args.lang}/{args.lang}_{args.pageType}"
+    save_path = f"output/tp/{args.query}/{args.lang}/{args.lang}_{args.pageType}"
 
 
 # save_path = os.path.join("output", sub_path)
@@ -140,10 +140,10 @@ print(f'retrieving test2 file, length {args.num_docs_test_2}')
 # load existing embeddings..
 embeddings = None
 if not args.train_embeddings:
-    # wv = KeyedVectors.load(emb_path)
-    wv = KeyedVectors.load_word2vec_format(emb_path)
+    wv = KeyedVectors.load(emb_path)
+    # wv = KeyedVectors.load_word2vec_format(emb_path)
     vectors = {}
-    for word in wv.key_to_index:
+    for word in vocab:
         vectors[word] = wv[word]
 
     embeddings = np.zeros((vocab_size, args.emb_size))
