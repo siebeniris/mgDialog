@@ -82,3 +82,37 @@ datasize_news_un:
     - pl: "low"
     - sk: "low"
     - sv: "low"
+topicmodels:
+    - cs:
+        - eu: "output/tp/eu/cs/cs_Twitter/best/etm_eu_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_8.0033653116721545e+31_epoch_186"
+        - un: "output/tp/un/cs/cs_Twitter/best/etm_un_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_2.3952038117816806e+18_epoch_172"
+    - da:
+        - eu: "output/tp/eu/da/da_Twitter/best/etm_eu_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_1.2867335022358708e+34_epoch_183"
+        - un: "output/tp/un/da/da_Twitter/best/etm_un_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_4.136550041762342e+31_epoch_166"
+    - de:
+        - eu: "output/tp/eu/de/de_Twitter/best/etm_eu_K_20_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_1.0148003881138887e+33_epoch_194"
+        - un: "output/tp/un/de/de_Twitter/best/etm_un_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_1.6861489656903537e+30_epoch_195"
+    - es:
+        - eu: "output/tp/eu/es/es_Twitter/best/etm_eu_K_20_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_4.700257978098124e+28_epoch_198"
+        - un: "output/tp/un/es/es_Twitter/best/etm_un_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_1.3122805037054942e+38_epoch_160"
+    - hu:
+        - eu: "output/tp/eu/hu/hu_Twitter/best/etm_eu_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_3.556007803450041e+16_epoch_110"
+        - un: "output/tp/un/hu/hu_Twitter/best/etm_un_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_9383744502685.4_epoch_182"
+    - it:
+        - eu: "output/tp/eu/it/it_Twitter/best/etm_eu_K_20_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_4.6970593947366456e+36_epoch_180"
+        - un: "output/tp/un/it/it_Twitter/best/etm_un_K_20_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_3.369255941776548e+33_epoch_193"
+    - nl:
+        - eu: "output/tp/eu/nl/nl_Twitter/best/etm_eu_K_20_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_5.1794140452557106e+33_epoch_177"
+    - pl:
+        - eu: "output/tp/eu/pl/pl_Twitter/best/etm_eu_K_20_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_1.4363523910706425e+34_epoch_172"
+        - un: "output/tp/un/pl/pl_Twitter/best/etm_un_K_20_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_7.601139270865806e+20_epoch_181"
+    - sk:
+        - eu: "output/tp/eu/sk/sk_Twitter/best/etm_eu_K_5_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_25336.5_epoch_492"
+        - un: "output/tp/un/sk/sk_Twitter/best/etm_un_K_5_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_10.6_epoch_191"
+    - sv:
+        - eu: "output/tp/eu/sv/sv_Twitter/best/etm_eu_K_20_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_1.0880113269947387e+37_epoch_150"
+        - un: "output/tp/un/sv/sv_Twitter/best/etm_un_K_10_Htheta_800_Optim_adam_Clip_0.0_ThetaAct_relu_Lr_0.005_Bsz_256_RhoSize_300_trainEmbeddings_0_val_loss_6.780231102217083e+41_epoch_149"
+
+
+
+
